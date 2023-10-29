@@ -9,12 +9,9 @@ FONT_STYLE = "italic"
 
 class QuizInterface():
 
-
-
     # Learning:Set background color for the window, not the canvas
     def __init__(self, quiz_brain: QuizBrain):
         self.quiz = quiz_brain
-
         self.window = Tk()
         self.score = 0
         self.window.title("Quizzler")
@@ -42,33 +39,42 @@ class QuizInterface():
 
         self.get_next_question()
 
-
-
         # like a never-ending while loop
         self.window.mainloop()
 
+    def finish_game(self):
+        self.canvas.itemconfig(self.question_text, text=f"Game Over. Your score is {self.quiz.score}")
+        self.canvas.config(bg="yellow")
+        self.btn_false.grid_forget()
+        self.btn_true.grid_forget()
+        print("game over")
+
     def get_next_question(self):
-        q_text = self.quiz.next_question()
-        self.canvas.itemconfig(self.question_text,text=q_text)
+        self.canvas.config(bg="white")
+        if self.quiz.still_has_questions():
+           q_text = self.quiz.next_question()
+           self.canvas.itemconfig(self.question_text, text=q_text)
+        else:
+            self.finish_game()
 
     def pick_true(self):
         # increment score
-        self.update_canvas_color(self.quiz.check_answer("True"))
         self.score_label.config(text=f"Score: {self.quiz.score}")
-        if self.quiz.still_has_questions():
-            self.get_next_question()
-        else:
-            print("mo more questions")
+        self.update_canvas_color(self.quiz.check_answer("True"))
+
     def pick_false(self):
         # do not increment score
-        self.update_canvas_color(self.quiz.check_answer("False"))
         self.score_label.config(text=f"Score: {self.quiz.score}")
-        self.get_next_question()
-
+        self.update_canvas_color(self.quiz.check_answer("False"))
 
     def update_canvas_color(self, is_correct: bool):
-        print("from update canvas")
-        print(is_correct)
+        if is_correct:
+            self.canvas.config(bg="green")
+        else:
+            self.canvas.config(bg="red")
+        self.window.after(1000, self.get_next_question)
+
+
 
 
 

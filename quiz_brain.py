@@ -28,5 +28,7 @@ class QuizBrain:
         else:
             return False
 
+
+    def end_game(self):
         print(f"Your current score is: {self.score}/{self.question_number}")
         print("\n")
